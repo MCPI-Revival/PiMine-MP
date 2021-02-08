@@ -1412,7 +1412,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				$this->displayName = $this->username;
 				$this->nameTag = $this->username;
 				$this->iusername = strtolower($this->username);
-				$this->loginData = ["clientId" => $packet->clientId, "loginData" => $packet->loginData];
 
 				if(count($this->server->getOnlinePlayers()) > $this->server->getMaxPlayers()){
 					if($this->kick("server full") === true){
@@ -1544,9 +1543,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				$pk->x = $this->x;
 				$pk->y = $this->y;
 				$pk->z = $this->z;
-				$pk->spawnX = (int) $spawnPosition->x;
-				$pk->spawnY = (int) $spawnPosition->y;
-				$pk->spawnZ = (int) $spawnPosition->z;
 				$pk->generator = 1; //0 old, 1 infinite, 2 flat
 				$pk->gamemode = $this->gamemode & 0x01;
 				$pk->eid = 0; //Always use EntityID as zero for the actual player
