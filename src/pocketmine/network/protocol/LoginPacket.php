@@ -31,8 +31,6 @@ class LoginPacket extends DataPacket{
 	public $username;
 	public $protocol1;
 	public $protocol2;
-	public $clientId;
-	public $loginData;
 
 	public function pid(){
 		return Info::LOGIN_PACKET;
@@ -42,8 +40,6 @@ class LoginPacket extends DataPacket{
 		$this->username = $this->getString();
 		$this->protocol1 = $this->getInt();
 		$this->protocol2 = $this->getInt();
-		$this->clientId = $this->getInt();
-		$this->loginData = $this->getString();
 	}
 
 	public function encode(){
