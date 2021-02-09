@@ -21,43 +21,54 @@
 
 namespace raklib\protocol;
 
-#include <rules/RakLibPacket.h>
+use raklib\Binary;
+
+
+
+
+
+
+
+
 
 class SERVER_HANDSHAKE_DataPacket extends Packet{
     public static $ID = 0x10;
 
-	public $address;
     public $port;
-    public $systemAddresses = [
-		["127.0.0.1", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4],
-		["0.0.0.0", 0, 4]
-    ];
-    
-    public $sendPing;
-    public $sendPong;
+    public $session;
+    public $session2;
 
     public function encode(){
         parent::encode();
-        $this->putAddress($this->address, $this->port, 4);
-        $this->putShort(0);
-        for($i = 0; $i < 10; ++$i){
-			$this->putAddress($this->systemAddresses[$i][0], $this->systemAddresses[$i][1], $this->systemAddresses[$i][2]);
-		}
-		
-        $this->putLong($this->sendPing);
-        $this->putLong($this->sendPong);
+        $this->buffer .= "\x04\x3f\x57\xfe"; //cookie
+        $this->buffer .= "\xcd"; //security flags
+        $this->buffer .= \pack("n", $this->port);
+        $this->putDataArray([
+            "\xf5\xff\xff\xf5",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+            "\xff\xff\xff\xff",
+        ]);
+        $this->buffer .= "\x00\x00";
+        $this->buffer .= Binary::writeLong($this->session);
+        $this->buffer .= Binary::writeLong($this->session2);
     }
 
     public function decode(){
         parent::decode();
         //TODO, not needed yet
+    }
+
+    private function putDataArray(array $data = []){
+        foreach($data as $v){
+            $this->buffer .= \substr(\pack("N", \strlen($v)), 1);
+            $this->buffer .= $v;
+        }
     }
 }

@@ -18,26 +18,26 @@ namespace raklib;
 
 //Dependencies check
 $errors = 0;
-if(version_compare("5.6.0", PHP_VERSION) > 0){
-    echo "[CRITICAL] Use PHP >= 5.6.0" . PHP_EOL;
+if(\version_compare("5.6.0", PHP_VERSION) > 0){
+    echo "[CRITICAL] Use PHP >= 5.6.0" . \PHP_EOL;
     ++$errors;
 }
 
-if(!extension_loaded("sockets")){
-    echo "[CRITICAL] Unable to find the Socket extension." . PHP_EOL;
+if(!\extension_loaded("sockets")){
+    echo "[CRITICAL] Unable to find the Socket extension." . \PHP_EOL;
     ++$errors;
 }
 
-if(!extension_loaded("pthreads")){
-    echo "[CRITICAL] Unable to find the pthreads extension." . PHP_EOL;
+if(!\extension_loaded("pthreads")){
+    echo "[CRITICAL] Unable to find the pthreads extension." . \PHP_EOL;
     ++$errors;
 }else{
-    $pthreads_version = phpversion("pthreads");
-    if(substr_count($pthreads_version, ".") < 2){
+    $pthreads_version = \phpversion("pthreads");
+    if(\substr_count($pthreads_version, ".") < 2){
         $pthreads_version = "0.$pthreads_version";
     }
 
-    if(version_compare($pthreads_version, "2.0.8") < 0){
+    if(\version_compare($pthreads_version, "2.0.8") < 0){
         echo "[CRITICAL] pthreads >= 2.0.8 is required, while you have $pthreads_version.";
         ++$errors;
     }
@@ -133,12 +133,17 @@ abstract class RakLib{
     const PACKET_RAW = 0x08;
 
     /*
+     * No payload
+     */
+    const PACKET_TICK = 0x09;
+
+    /*
      * RAW payload:
      * byte (address length)
      * byte[] (address)
      * int (timeout)
      */
-    const PACKET_BLOCK_ADDRESS = 0x09;
+    const PACKET_BLOCK_ADDRESS = 0x0a;
 
     /*
      * No payload
@@ -155,6 +160,6 @@ abstract class RakLib{
     const PACKET_EMERGENCY_SHUTDOWN = 0x7f;
 
     public static function bootstrap(\ClassLoader $loader){
-        $loader->addPath(dirname(__FILE__) . DIRECTORY_SEPARATOR . "..");
+        $loader->addPath(\dirname("<stdin>") . DIRECTORY_SEPARATOR . "..");
     }
 }

@@ -21,26 +21,34 @@
 
 namespace raklib\protocol;
 
-#include <rules/RakLibPacket.h>
+use raklib\Binary;
+
+
+
+
+
+
+
+
 
 class CLIENT_CONNECT_DataPacket extends Packet{
     public static $ID = 0x09;
 
     public $clientID;
-    public $sendPing;
-    public $useSecurity = false;
+    public $session;
+    public $unknown;
 
     public function encode(){
         parent::encode();
-        $this->putLong($this->clientID);
-        $this->putLong($this->sendPing);
-        $this->putByte($this->useSecurity ? 1 : 0);
+        $this->buffer .= Binary::writeLong($this->clientID);
+        $this->buffer .= Binary::writeLong($this->session);
+        $this->buffer .= "\x00";
     }
 
     public function decode(){
         parent::decode();
-        $this->clientID = $this->getLong();
-        $this->sendPing = $this->getLong();
-        $this->useSecurity = $this->getByte() > 0;
+        $this->clientID = Binary::readLong($this->get(8));
+        $this->session = Binary::readLong($this->get(8));
+        $this->unknown = $this->get(1);
     }
 }

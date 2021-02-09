@@ -21,32 +21,50 @@
 
 namespace raklib\protocol;
 
-#include <rules/RakLibPacket.h>
+use raklib\Binary;
+
+
+
+
+
+
+
+
 
 class CLIENT_HANDSHAKE_DataPacket extends Packet{
     public static $ID = 0x13;
 
-    public $address;
+    public $cookie;
+    public $security;
     public $port;
-    
-    public $systemAddresses = [];
-    
-    public $sendPing;
-    public $sendPong;
+    public $dataArray0;
+    public $dataArray;
+    public $timestamp;
+    public $session2;
+    public $session;
 
     public function encode(){
-        
+        parent::encode();
     }
 
     public function decode(){
         parent::decode();
-        $this->getAddress($this->address, $this->port);
-         for($i = 0; $i < 10; ++$i){
-			$this->getAddress($addr, $port, $version);
-			$this->systemAddresses[$i] = [$addr, $port, $version];
-		}
-		
-        $this->sendPing = $this->getLong();
-        $this->sendPong = $this->getLong();
+        $this->cookie = $this->get(4);
+        $this->security = $this->get(1);
+        $this->port = \unpack("n", $this->get(2))[1];
+        $this->dataArray0 = $this->get(\ord($this->get(1)));
+        $this->dataArray = $this->getDataArray(9);
+        $this->timestamp = $this->get(2);
+        $this->session2 = Binary::readLong($this->get(8));
+        $this->session = Binary::readLong($this->get(8));
+    }
+
+    private function getDataArray($len = 10){
+        $data = [];
+        for($i = 1; $i <= $len and !$this->feof(); ++$i){
+            $data[] = $this->get(\unpack("N", "\x00" . $this->get(3))[1]);
+        }
+
+        return $data;
     }
 }

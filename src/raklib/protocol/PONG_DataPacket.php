@@ -21,20 +21,28 @@
 
 namespace raklib\protocol;
 
-#include <rules/RakLibPacket.h>
+use raklib\Binary;
+
+
+
+
+
+
+
+
 
 class PONG_DataPacket extends Packet{
-    public static $ID = 0x03;
+    public static $ID = 0x00;
 
     public $pingID;
 
     public function encode(){
         parent::encode();
-        $this->putLong($this->pingID);
+        $this->buffer .= Binary::writeLong($this->pingID);
     }
 
     public function decode(){
         parent::decode();
-        $this->pingID = $this->getLong();
+        $this->pingID = Binary::readLong($this->get(8));
     }
 }

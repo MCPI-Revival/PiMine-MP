@@ -15,7 +15,15 @@
 
 namespace raklib\protocol;
 
-#include <rules/RakLibPacket.h>
+use raklib\Binary;
+
+
+
+
+
+
+
+
 
 
 use raklib\RakLib;
@@ -27,13 +35,13 @@ class UNCONNECTED_PING extends Packet{
 
     public function encode(){
         parent::encode();
-        $this->putLong($this->pingID);
-        $this->put(RakLib::MAGIC);
+        $this->buffer .= Binary::writeLong($this->pingID);
+        $this->buffer .= RakLib::MAGIC;
     }
 
     public function decode(){
         parent::decode();
-        $this->pingID = $this->getLong();
+        $this->pingID = Binary::readLong($this->get(8));
         //magic
     }
 }
